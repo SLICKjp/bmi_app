@@ -6,186 +6,189 @@ class Home extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return new HomeState();
+    return HomeState();
   }
 }
 
 class HomeState extends State<Home> {
-final TextEditingController _ageController=TextEditingController();
-final TextEditingController _heightController=TextEditingController();
-final TextEditingController _weightController=TextEditingController();
-double inches=0.0;
-double result=0.0;
-String resultReadig="";
-String finalResult="";
-void showResult()
- {
-    setState(() {
-         int age=int.parse(_ageController.text);
-         double height=double.parse(_heightController.text),
-         inches=(height*30.48)/100;
-         double weight=double.parse(_weightController.text);
 
-           if((_ageController.text.isNotEmpty || age >0)
-           &&((_heightController.text.isNotEmpty ||  inches > 0)
-           &&(_weightController.text.isNotEmpty || weight > 0)))
-              {
-                 result= weight/ (inches * inches);
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  double inches = 0.0;
+  double result = 0.0;
+  String resultReadig = "";
+  String finalResult = "";
+  String errMsg = "Something Is Missing!!";
+  String shape = "";
+  bool isError = false;
 
-                 if(double.parse(result.toStringAsFixed(1)) < 18.5)
-                 {
-                   resultReadig="UNDERWEIGHT";
-                   print(resultReadig);
-                 }
-                  else if(double.parse(result.toStringAsFixed(1)) >= 18.5 &&
-                        result <25)
-                 {
-                    resultReadig="GREAT SHAPE";
-                    print(resultReadig);
-                 }
-                  else if(double.parse(result.toStringAsFixed(1)) > 25)
-                    {
-                      resultReadig='OVERWEIGHT';
-                      print(resultReadig);
-                    }
-              }
-           else
-             {
-               result=0.0;
-             }
-    });
-          finalResult="Your BMI : ${result.toStringAsFixed(1)}";
- }
+  void showResult() {
 
+      if ((_ageController.text == "") ||
+          ((_heightController.text == "") ||
+              (_weightController.text == ""))) {
+
+        setState(() {
+          isError = true;
+          resultReadig = errMsg;
+
+        });
+
+      } else {
+        isError = false;
+        int age = int.parse(_ageController.text);
+        double heightValue = double.parse(_heightController.text),
+            height = (heightValue * 30.48) / 100;
+        double weight = double.parse(_weightController.text);
+
+        result = weight / (height * height);
+
+        if (double.parse(result.toStringAsFixed(1)) < 18.5) {
+          shape = "UNDERWEIGHT";
+//          print(resultReadig);
+        } else if (double.parse(result.toStringAsFixed(1)) >= 18.5 &&
+            result < 25) {
+          shape = "GREAT SHAPE";
+//          print(resultReadig);
+        } else if (double.parse(result.toStringAsFixed(1)) > 25) {
+          shape = 'OVERWEIGHT';
+//          print(resultReadig);
+        }
+
+        setState(() {
+          resultReadig = shape;
+        });
+      }
+    finalResult = "Your BMI : ${result.toStringAsFixed(1)}";
+  }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('BMI'),
-        backgroundColor: Colors.lightBlueAccent,
-        centerTitle: true,
-      ),
-      body: new Container(
-          alignment: Alignment.topCenter,
-          child: new ListView(
-            children: <Widget>[
-              new Image.asset(
-                'images/bmi.png',
-                height: 90,
-                width: 90,
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'BMI Finder',
+            style: TextStyle(fontSize: 26),
+          ),
+          backgroundColor: Colors.lightBlueAccent,
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('images/body-mass.png'),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(children: <Widget>[
+              SizedBox(
+                height: 50,
               ),
-          new Container(
-             height: 300,
-             width: 180,
-             //color: Colors.black26,
-          child: new Column(
-            children: <Widget>[
-              new TextField(
-                controller: _ageController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  enabledBorder:OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue),
-                    borderRadius:BorderRadius.all(Radius.circular(30)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue),
-                    borderRadius:BorderRadius.all(Radius.circular(30)),
-                  ),
-                  labelText: 'Age',
-                  hintText: 'Enter your age',
-                  prefixIcon: Icon(Icons.person),
-                ),
-              ),
-              new Padding(padding: EdgeInsets.all(10.0)),
-              new TextField(
-                controller: _heightController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.lightBlue),
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue),
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  labelText: 'Height in feet',
-                  hintText: 'enter your height',
-                  prefixIcon: Icon(Icons.assessment),
-                ),
-              ),
-              new Padding(padding: EdgeInsets.all(10.0)),
-              new TextField(
-                controller: _weightController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue),
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue),
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  labelText: 'Weight in kg',
-                  hintText: 'enter your weight',
-                  prefixIcon: Icon(Icons.toc),
-                ),
-              ),
-              new Padding(padding: EdgeInsets.all(10.0)),
-              new Center(
-                child: new Row(
-                  children: <Widget>[
-                    new Container(
-                      margin: new EdgeInsets.only(left: 150.0),
-                      child: new RaisedButton(
-                          onPressed: showResult,
-                          color: Colors.lightBlue,
-                          child: new Text('Calculate',
-                          style: new TextStyle(
-                            fontSize: 18.5,
-                          ),
-                          ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: 0.4 * MediaQuery.of(context).size.width,
+                  child: TextField(
+                    controller: _ageController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.lightBlue),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.lightBlue),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      labelText: 'Age',
+                      labelStyle: TextStyle(color: Colors.lightBlue),
+                      prefixIcon: Icon(Icons.person),
                     ),
-
-
-                  ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 0.4 * MediaQuery.of(context).size.width,
+                child: TextField(
+                  controller: _heightController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.lightBlue),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.lightBlue),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    labelText: 'Height in ft',
+                    labelStyle: TextStyle(color: Colors.lightBlue),
+                    prefixIcon: Icon(Icons.assessment),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 0.4 * MediaQuery.of(context).size.width,
+                child: TextField(
+                  controller: _weightController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.lightBlue),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.lightBlue),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    labelText: 'Weight in kg',
+                    labelStyle: TextStyle(color: Colors.lightBlue),
+                    prefixIcon: Icon(Icons.toc),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              RaisedButton(
+                onPressed: showResult,
+                color: Colors.lightBlue,
+                textColor: Colors.white,
+                child: Text(
+                  'Calculate',
+                  style: TextStyle(
+                    fontSize: 18.5,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20,),
+              Visibility(
+                visible: isError == true ? false : true,
+                child: Text(
+                  "$finalResult",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.all(5.5)),
+              Text(
+                "$resultReadig",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 18.5,
                 ),
               )
-
-            ],
+            ]),
           ),
-
-          ) ,
-              new Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Text("$finalResult",
-                    style: new TextStyle(
-                      fontSize: 20,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-              new Padding(padding: EdgeInsets.all(5.5)),
-
-              new Text("$resultReadig",
-               textAlign: TextAlign.center,
-               style: new TextStyle(
-                 fontStyle: FontStyle.normal,
-                 fontSize: 18.5,
-               ),
-
-              ),
-
-
-            ],
-          )),
-    );
+        ));
   }
 }
